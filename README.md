@@ -1,24 +1,20 @@
-# README
+# LiveHeats coding challenge
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+Small app to create and manage races between students
 
-Things you may want to cover:
+## Basic setup
 
-* Ruby version
+Requirements:
 
-* System dependencies
+* Ruby 3.3.6 (or compatible)
+* Rails 8.0.1
 
-* Configuration
+```
+$ git clone git@github.com:jahseng-lee/liveheats-coding-challenge.git
+$ cd liveheats-coding-challenge
+$ bundle && yarn
+$ rails db:create db:schema:load
+$ ./bin/dev
+```
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+Then the app should be available at `localhost:3000`
