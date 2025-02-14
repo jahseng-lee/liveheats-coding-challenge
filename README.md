@@ -18,3 +18,14 @@ $ ./bin/dev
 ```
 
 Then the app should be available at `localhost:3000`
+
+## Running tests
+
+This project uses RSpec.
+
+Requirements:
+* Chrome (feature tests use `selenium` and `chrome` as the driver)
+
+```ruby
+bundle exec rspec
+```
