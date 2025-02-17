@@ -10,9 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_17_064440) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_17_065048) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "participants", force: :cascade do |t|
+    t.bigint "student_id"
+    t.bigint "race_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["race_id"], name: "index_participants_on_race_id"
+    t.index ["student_id"], name: "index_participants_on_student_id"
+  end
 
   create_table "races", force: :cascade do |t|
     t.text "name", null: false
