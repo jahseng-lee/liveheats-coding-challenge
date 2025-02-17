@@ -1,29 +1,52 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from "react-router";
+
 import {
+  Alert,
   Box,
   Button,
   FormControl,
   MenuItem,
   Select,
+  TextField,
   Typography
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-// TODO: move to seperate file
 const fetchStudents = async () => {
-  return fetch(`/students`)
+  return fetch('/students')
     .then((response) => response.text())
     .then((data) => {
       return JSON.parse(data);
     });
 };
 
+const createRace = (body) => {
+  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+  return fetch('/races', {
+    method: "POST",
+    headers: {
+      "X-CSRF-Token": csrfToken,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body),
+  })
+    .then((response) => response.text())
+    .then((data) => {
+      return JSON.parse(data);
+    })
+};
+
 const CreateRace = () => {
+  const [name, setName] = useState("");
   const [students, setStudents] = useState([]);
-  const [brackets, setBrackets] = useState([
+  const [participants, setParticipants] = useState([
     { studentId: null, lane: 1 },
     { studentId: null, lane: 2 }
   ]);
+  const [error, setError] = useState("");
+
+  let navigate = useNavigate();
 
   useEffect(() => {
     fetchStudents().then((data) => {
@@ -31,33 +54,50 @@ const CreateRace = () => {
     });
   }, [])
 
-  const updateBrackets = (event, child) => {
-    const newBrackets = brackets
-      .filter((bracket) => {
+  const updateParticipants = (event, child) => {
+    const newParticipants = participants
+      .filter((participant) => {
         // Remove existing lane...
-        return bracket.lane !== child.props["data-lane"]
+        return participant.lane !== child.props["data-lane"]
       });
 
     // ... and add it back with the correct student value
-    newBrackets.push({
+    newParticipants.push({
       studentId: event.target.value,
       lane: child.props["data-lane"]}
     );
 
-    setBrackets(newBrackets);
+    setParticipants(newParticipants);
   };
 
   const addLane = () => {
-    setBrackets(
+    setParticipants(
       [
-        ...brackets,
-        { studentId: null, lane: brackets.length + 1 }
+        ...participants,
+        { studentId: null, lane: participants.length + 1 }
       ]
     );
   };
 
-  const createRace = () => {
-    console.log("TODO implement createRace");
+  const submitCreateRace = () => {
+    console.log(participants);
+    createRace({
+      race: {
+        name: name,
+        participants: participants.map((participant) => ({
+          student_id: participant.studentId,
+          lane: participant.lane
+        }))
+      }
+    })
+      .then((data) => {
+        if(data.status === 201) {
+          setError("");
+          navigate("/");
+        } else {
+          setError(data.message);
+        }
+      })
   };
 
   return (
@@ -66,13 +106,23 @@ const CreateRace = () => {
         Create a new race
       </Typography>
 
-      {brackets.sort((a, b) => a.lane - b.lane).map(({studentId, lane }) => (
-        <FormControl key={lane} fullWidth sx={{ mb: 1 }}>
+      {!!error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert> }
+
+      <TextField
+        id="outlined-basic"
+        label="Name"
+        variant="outlined"
+        fullWidth
+        onChange={(event) => setName(event.target.value)}
+      />
+
+      {participants.sort((a, b) => a.lane - b.lane).map(({studentId, lane }) => (
+        <FormControl key={lane} sx={{ mb: 1 }} fullWidth>
           <Typography>Lane {lane}</Typography>
           <Select
             id={`lane-${lane}`}
             value={studentId || ''}
-            onChange={updateBrackets}
+            onChange={updateParticipants}
             displayEmpty
           >
             {students.map((student) => (
@@ -90,7 +140,7 @@ const CreateRace = () => {
 
       <Box>
         {
-          (brackets.length !== students.length) && (
+          (participants.length !== students.length) && (
             <Button
               variant="outlined"
               startIcon={<AddIcon />}
@@ -103,7 +153,7 @@ const CreateRace = () => {
         }
         <Button
           variant="contained"
-          onClick={createRace}
+          onClick={submitCreateRace}
           >
             Create
         </Button>

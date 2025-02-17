@@ -24,13 +24,11 @@ RSpec.describe "Students", type: :request do
       expect(data["students"]).to contain_exactly(
         {
           "id" => student_1.id,
-          "first_name" => student_1.first_name,
-          "last_name" => student_1.last_name
+          "name" => student_1.first_name + " " + student_1.last_name,
         },
         {
           "id" => student_2.id,
-          "first_name" => student_2.first_name,
-          "last_name" => student_2.last_name
+          "name" => student_2.first_name + " " + student_2.last_name,
         },
       )
     end
