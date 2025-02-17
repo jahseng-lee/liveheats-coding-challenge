@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   FormControl,
+  InputLabel,
   MenuItem,
   Select,
   TextField,
@@ -114,12 +115,16 @@ const CreateRace = () => {
         variant="outlined"
         fullWidth
         onChange={(event) => setName(event.target.value)}
+        sx={{ mb: 1}}
       />
+
+      <hr />
 
       {participants.sort((a, b) => a.lane - b.lane).map(({studentId, lane }) => (
         <FormControl key={lane} sx={{ mb: 1 }} fullWidth>
-          <Typography>Lane {lane}</Typography>
+          <InputLabel id={`select-lane-${lane}`}>Lane {lane}</InputLabel>
           <Select
+            labelId={`select-lane-${lane}`}
             id={`lane-${lane}`}
             value={studentId || ''}
             onChange={updateParticipants}
