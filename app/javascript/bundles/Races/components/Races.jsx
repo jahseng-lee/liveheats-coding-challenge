@@ -1,12 +1,15 @@
-import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import * as style from './Home.module.css';
 
-const Home = (props) => {
+import * as style from './Races.module.css';
+
+import Button from '@mui/material/Button';
+
+const Races = (props) => {
   const [name, setName] = useState(props.name);
 
   return (
     <div>
+      <Button variant="contained">Hello world</Button>;
       <h3>Hello, {name}!</h3>
       <hr />
       <form>
@@ -19,8 +22,4 @@ const Home = (props) => {
   );
 };
 
-Home.propTypes = {
-  name: PropTypes.string.isRequired, // this is passed from the Rails view
-};
-
-export default Home;
+export default Races;
