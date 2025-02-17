@@ -7,7 +7,10 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
+import {
+  Add as AddIcon,
+  EmojiEvents as EmojiEventsIcon
+} from '@mui/icons-material';
 
 const Navbar = () => {
   return (
@@ -19,9 +22,18 @@ const Navbar = () => {
           </Typography>
           <Button
             color="inherit"
+            startIcon={<EmojiEventsIcon />}
+            href="/"
+          >
+            Races
+          </Button>
+          <Button
+            color="inherit"
             startIcon={<AddIcon />}
             href="/create_race"
-          >Create race</Button>
+          >
+            Create race
+          </Button>
         </Toolbar>
       </AppBar>
     </Box>
