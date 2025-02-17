@@ -7,11 +7,11 @@ RSpec.feature "Creating a race", type: :feature, js: true do
 
   describe "clicking the 'Create race' button" do
     before do
-      click_button "Create race"
+      click_link "Create race"
     end
 
     it "shows the form to create a new race" do
-      expect(page).to have_content "Creating a new race"
+      expect(page).to have_content "Create a new race"
     end
   end
 end
