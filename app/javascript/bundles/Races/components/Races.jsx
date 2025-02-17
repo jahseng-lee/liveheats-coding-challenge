@@ -8,7 +8,7 @@ import {
   Box
 } from '@mui/material';
 
-import * as style from './Races.module.css';
+import './Races.module.css';
 
 const Races = () => {
   return (
