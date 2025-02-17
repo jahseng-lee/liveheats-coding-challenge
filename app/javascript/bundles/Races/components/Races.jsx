@@ -2,9 +2,11 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router";
 
 import CreateRace from './CreateRace';
-
-import Box from '@mui/material/Box';
 import Navbar from './Navbar/Navbar';
+
+import {
+  Box
+} from '@mui/material';
 
 import * as style from './Races.module.css';
 

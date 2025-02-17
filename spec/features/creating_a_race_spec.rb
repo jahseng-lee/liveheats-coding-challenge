@@ -13,5 +13,15 @@ RSpec.feature "Creating a race", type: :feature, js: true do
     it "shows the form to create a new race" do
       expect(page).to have_content "Create a new race"
     end
+
+    context "filling out the form and clicking 'Create'" do
+      before do
+        pending "TODO"
+      end
+
+      it "creates a new race" do
+        pending "TODO"
+      end
+    end
   end
 end
