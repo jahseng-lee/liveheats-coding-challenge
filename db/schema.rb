@@ -17,6 +17,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_17_065048) do
   create_table "participants", force: :cascade do |t|
     t.bigint "student_id"
     t.bigint "race_id"
+    t.integer "lane"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["race_id"], name: "index_participants_on_race_id"
