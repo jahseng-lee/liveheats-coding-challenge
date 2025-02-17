@@ -7,8 +7,8 @@ class StudentsController < ApplicationController
       .map do |student|
         {
           id: student[0],
-          first_name: student[1],
-          last_name: student[2]
+          # "first_name last_name"
+          name: [student[1], student[2]].join(" ")
         }
       end
 

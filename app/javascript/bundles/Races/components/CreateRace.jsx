@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Button,
@@ -9,18 +9,27 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
+// TODO: move to seperate file
+const fetchStudents = async () => {
+  return fetch(`/students`)
+    .then((response) => response.text())
+    .then((data) => {
+      return JSON.parse(data);
+    });
+};
+
 const CreateRace = () => {
-  // TODO call Rails backend and load all students
-  const [students, setStudents] = useState([
-    { id: 1, name: "Megumi Fushigoro" },
-    { id: 2, name: "Yuji Itadori" },
-    { id: 3, name: "Nobara Kugisaki"},
-    { id: 4, name: "Aoi Todo" }
-  ]);
+  const [students, setStudents] = useState([]);
   const [brackets, setBrackets] = useState([
     { studentId: null, lane: 1 },
     { studentId: null, lane: 2 }
   ]);
+
+  useEffect(() => {
+    fetchStudents().then((data) => {
+      setStudents(data.students);
+    });
+  }, [])
 
   const updateBrackets = (event, child) => {
     const newBrackets = brackets
