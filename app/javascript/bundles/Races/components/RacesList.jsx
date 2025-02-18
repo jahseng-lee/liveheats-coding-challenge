@@ -5,11 +5,12 @@ import {
   Card,
   CardActionArea,
   CardContent,
+  Link,
   Typography
 } from '@mui/material';
 
 const RacesList = () => {
-  const [races, setRaces] = useState([]);
+  const [races, setRaces] = useState();
 
   useEffect(() => {
     fetchRaces().then((data) => {
@@ -19,8 +20,17 @@ const RacesList = () => {
 
   return (
     <>
-      {(races.length !== 0) && (
+      {!!races && (
         <>
+          {(races.length === 0) && (
+            <>
+              <Typography>
+                No races created yet.&nbsp;
+                <Link href="/create_race">Create one now</Link>
+              </Typography>
+            </>
+          )}
+
           {races.map((race) => (
             <Card variant='outlined' sx={{ mb: 2}}>
               <CardActionArea href={`/race/${race.id}`}>
