@@ -19,22 +19,38 @@ RSpec.describe "Races", type: :request do
       last_name: "Todo"
     )
   end
+  let!(:race) do
+    Race.create!(name: "100m sprint")
+  end
+  let!(:participant_1) do
+    Participant.create!(
+      student: student_1,
+      lane: 1,
+      race: race
+    )
+  end
+  let!(:participant_2) do
+    Participant.create!(
+      student: student_2,
+      lane: 2,
+      race: race
+    )
+  end
 
   describe "GET #index" do
-    let!(:race_1) { Race.create!(name: "100m sprint") }
     let!(:race_2) { Race.create!(name: "200m sprint") }
 
     it "returns a list of all the races" do
-      get races_path(format: :json)
+      get races_path
 
       data = JSON.parse(response.body)
 
       expect(data["status"]).to eq 200
       expect(data["races"]).to contain_exactly(
         {
-          "id" => race_1.id,
-          "name" => race_1.name,
-          "status" => race_1.status
+          "id" => race.id,
+          "name" => race.name,
+          "status" => race.status
         },
         {
           "id" => race_2.id,
@@ -46,26 +62,8 @@ RSpec.describe "Races", type: :request do
   end
 
   describe "GET #show" do
-    let!(:race) do
-      race = Race.create!(name: "100m sprint")
-
-      Participant.create!(
-        student: student_1,
-        lane: 1,
-        race: race
-      )
-
-      Participant.create!(
-        student: student_2,
-        lane: 2,
-        race: race
-      )
-
-      race
-    end
-
     it "returns the race and the participants" do
-      get race_path(race, format: :json)
+      get race_path(race)
 
       data = JSON.parse(response.body)
 
@@ -86,7 +84,7 @@ RSpec.describe "Races", type: :request do
   end
 
   describe "POST #create" do
-    let(:name) { "100m sprint" }
+    let(:name) { "1km run" }
 
     context "with valid parameters" do
       let(:params) do
@@ -104,7 +102,7 @@ RSpec.describe "Races", type: :request do
 
       it "creates a race and returns success" do
         expect{
-          post races_path(format: :json), params: params
+          post races_path, params: params
         }.to change{
           Race.count
         }.by(1)
@@ -135,7 +133,7 @@ RSpec.describe "Races", type: :request do
 
       it "does not create a race" do
         expect{
-          post races_path(format: :json), params: params
+          post races_path, params: params
         }.not_to change{
           Race.count
         }
@@ -159,7 +157,7 @@ RSpec.describe "Races", type: :request do
 
       it "does not create a race" do
         expect{
-          post races_path(format: :json), params: params
+          post races_path, params: params
         }.not_to change{
           Race.count
         }
@@ -183,12 +181,101 @@ RSpec.describe "Races", type: :request do
 
       it "does not create a race" do
         expect{
-          post races_path(format: :json), params: params
+          post races_path, params: params
         }.not_to change{
           Race.count
         }
 
         expect(response.status).to eq 422
+      end
+    end
+  end
+
+  describe "PUT #update" do
+    context "with valid parameters" do
+      let(:params) do
+        {
+          race: {
+            participants: [
+              { id: participant_1.id, placing: 2 },
+              { id: participant_2.id, placing: 1 },
+            ]
+          }
+        }
+      end
+
+      it "updates the participants with the placings and marks the" \
+        "race as complete" do
+          expect(participant_1.placing).to eq nil
+          expect(participant_2.placing).to eq nil
+
+          put race_path(race), params: params
+
+          data = JSON.parse(response.body)
+
+          expect(participant_1.reload.placing).to eq 2
+          expect(participant_2.reload.placing).to eq 1
+          expect(race.reload.status).to eq "complete"
+
+          expect(data["status"]).to eq 201
+      end
+    end
+
+    context "with gaps in placings" do
+      let(:params) do
+        {
+          race: {
+            participants: [
+              { id: participant_1.id, placing: 1 },
+              { id: participant_2.id, placing: 3 },
+            ]
+          }
+        }
+      end
+
+      it "does not update the placings or status" do
+        put race_path(race), params: params
+
+        data = JSON.parse(response.body)
+
+        expect(participant_1.reload.placing).to eq nil
+        expect(participant_2.reload.placing).to eq nil
+        expect(race.reload.status).to eq "pending"
+
+        expect(data["status"]).to eq 422
+      end
+    end
+
+    context "with invalid placings" do
+      let!(:participant_3) do
+        Participant.create!(
+          student: student_3,
+          lane: 3,
+          race: race
+        )
+      end
+      let(:params) do
+        {
+          race: {
+            participants: [
+              { id: participant_1.id, placing: 1 },
+              { id: participant_2.id, placing: 1 },
+              { id: participant_2.id, placing: 2 },
+            ]
+          }
+        }
+      end
+
+      it "does not update the placings or status" do
+        put race_path(race), params: params
+
+        data = JSON.parse(response.body)
+
+        expect(participant_1.reload.placing).to eq nil
+        expect(participant_2.reload.placing).to eq nil
+        expect(race.reload.status).to eq "pending"
+
+        expect(data["status"]).to eq 422
       end
     end
   end

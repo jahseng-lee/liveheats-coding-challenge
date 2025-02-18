@@ -1,7 +1,8 @@
 class RacesController < ApplicationController
-  class NotEnoughParticipantsError < StandardError; end
   class DuplicateLaneError < StandardError; end
   class DuplicateParticipantError < StandardError; end
+  class NotEnoughParticipantsError < StandardError; end
+  class PlacementGapsError < StandardError; end
 
   def index
     @races = Race
@@ -41,7 +42,7 @@ class RacesController < ApplicationController
   end
 
   def create
-    @race = Race.new(name: race_params[:name])
+    @race = Race.new(name: create_race_params[:name])
 
     Race.transaction do
       if not_enough_participants?
@@ -59,7 +60,7 @@ class RacesController < ApplicationController
 
       @race.save!
 
-      race_params[:participants].each do |participant|
+      create_race_params[:participants].each do |participant|
         @race.participants.create!(
           student_id: participant[:student_id],
           lane: participant[:lane],
@@ -91,9 +92,39 @@ class RacesController < ApplicationController
     }, status: 422
   end
 
+  def update
+
+    @race = Race.find(params[:id])
+
+    if placing_gaps?
+      raise PlacementGapsError, "gaps in final placings"
+    end
+
+    Race.transaction do
+      update_race_params[:participants].each do |participant|
+        @race
+          .participants
+          .find(participant[:id])
+          .update!(
+            placing: participant[:placing]
+          )
+      end
+
+      @race.update!(status: "complete")
+    end
+
+    render json: { status: 201 }, status: 201
+  rescue PlacementGapsError
+    render json: {
+      status: 422,
+      message: "Placements invalid. Placements must have correct gaps" \
+        " i.e. \"1, 1, 3, 4\"; NOT 1, 1, 2, 4 OR 1, 3, 4, 6"
+    }, status: 422
+  end
+
   private
 
-  def race_params
+  def create_race_params
     params.require(:race).permit(
       :name,
       participants: [
@@ -103,19 +134,56 @@ class RacesController < ApplicationController
     )
   end
 
+  def update_race_params
+    params.require(:race).permit(
+      participants: [
+        :id,
+        :placing
+      ]
+    )
+  end
+
   def not_enough_participants?
-    race_params[:participants].map do
+    create_race_params[:participants].map do
       |participant| participant[:student_id]
     end.compact.length < 2
   end
 
   def duplicate_lanes?
-    race_params[:participants].map{ |participant| participant[:lane] }.count !=
-      race_params[:participants].map{ |participant| participant[:lane] }.uniq.count
+    create_race_params[:participants].map{ |participant| participant[:lane] }.count !=
+      create_race_params[:participants].map{ |participant| participant[:lane] }.uniq.count
   end
 
   def duplicate_participants?
-    race_params[:participants].map{ |participant| participant[:student_id] }.count !=
-      race_params[:participants].map{ |participant| participant[:student_id] }.uniq.count
+    create_race_params[:participants].map{ |participant| participant[:student_id] }.count !=
+      create_race_params[:participants].map{ |participant| participant[:student_id] }.uniq.count
+  end
+
+  # Simple algorithm to detect placing gaps
+  # [1, 2, 3] is valid, will return false
+  # [1, 1, 3] is valid, will return false
+  # [1, 1, 2] is invalid, will return true
+  # [1, 2, 4] is invalid, will return true
+  def placing_gaps?
+    sorted_placings = update_race_params[:participants]
+      .map do |participant|
+        Integer(participant[:placing])
+      end
+      .sort
+
+    current_placing = 1
+    next_valid_placing = 1
+    sorted_placings.each do |placing|
+      if placing != current_placing &&
+          placing != next_valid_placing
+        # placing is not a tie not the next expected placing
+        return true
+      end
+
+      current_placing = placing
+      next_valid_placing += 1
+    end
+
+    false
   end
 end

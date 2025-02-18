@@ -85,11 +85,12 @@ const Race = (props) => {
                   variant='standard'
                   sx={{ m: 1, minWidth: 120, marginLeft: 'auto' }}
                 >
-                  <InputLabel id={`participant-${participant.id}-placing`}>
+                  <InputLabel id={`participant-${participant.id}-placing-label`}>
                     Placing
                   </InputLabel>
                   <Select
-                    labelId={`participant-${participant.id}-placing`}
+                    id={`participant-${participant.id}-placing`}
+                    labelId={`participant-${participant.id}-placing-label`}
                     value={participant.placing || ''}
                     label='Placing'
                     onChange={updatePlacings}
