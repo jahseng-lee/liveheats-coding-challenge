@@ -20,6 +20,26 @@ class RacesController < ApplicationController
     }, status: 200
   end
 
+  def show
+    @race = Race.find(params[:id])
+
+    render json: {
+      status: 200,
+      race: {
+        id: @race.id,
+        name: @race.name,
+        participants: @race.participants.map do |participant|
+          {
+            id: participant.id,
+            name: participant.student.name,
+            lane: participant.lane,
+            placing: participant.placing
+          }
+        end
+      }
+    }
+  end
+
   def create
     @race = Race.new(name: race_params[:name])
 

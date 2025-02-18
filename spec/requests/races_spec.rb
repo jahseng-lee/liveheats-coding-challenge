@@ -45,6 +45,46 @@ RSpec.describe "Races", type: :request do
     end
   end
 
+  describe "GET #show" do
+    let!(:race) do
+      race = Race.create!(name: "100m sprint")
+
+      Participant.create!(
+        student: student_1,
+        lane: 1,
+        race: race
+      )
+
+      Participant.create!(
+        student: student_2,
+        lane: 2,
+        race: race
+      )
+
+      race
+    end
+
+    it "returns the race and the participants" do
+      get race_path(race, format: :json)
+
+      data = JSON.parse(response.body)
+
+      expect(data["status"]).to eq 200
+      expect(data["race"]).to eq({
+        "id" => race.id,
+        "name" => race.name,
+        "participants" => race.participants.map do |participant|
+          {
+            "id" => participant.id,
+            "name" => participant.student.name,
+            "lane" => participant.lane,
+            "placing" => participant.placing
+          }
+        end
+      })
+    end
+  end
+
   describe "POST #create" do
     let(:name) { "100m sprint" }
 
