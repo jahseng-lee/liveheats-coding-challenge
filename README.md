@@ -38,3 +38,8 @@ If you wish to run feature specs in headless mode, run
 ```ruby
 HEADLESS=1 bundle exec rspec spec/features
 ```
+
+The Ruby tests can be found under `spec/` directory.\
+There are a couple of Jest tests, under:
+* `app/javascript/bundles/Races/components/CreateRace/CreateRace.test.jsx`; and
+* `app/javascript/bundles/Races/components/Navbar/Navbar.test.jsx`
