@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe "Races", type: :request do
-  let(:name) { "100m sprint" }
   let!(:student_1) do
     Student.create!(
       first_name: "Megumi",
@@ -21,7 +20,34 @@ RSpec.describe "Races", type: :request do
     )
   end
 
+  describe "GET #index" do
+    let!(:race_1) { Race.create!(name: "100m sprint") }
+    let!(:race_2) { Race.create!(name: "200m sprint") }
+
+    it "returns a list of all the races" do
+      get races_path(format: :json)
+
+      data = JSON.parse(response.body)
+
+      expect(data["status"]).to eq 200
+      expect(data["races"]).to contain_exactly(
+        {
+          "id" => race_1.id,
+          "name" => race_1.name,
+          "status" => race_1.status
+        },
+        {
+          "id" => race_2.id,
+          "name" => race_2.name,
+          "status" => race_2.status
+        },
+      )
+    end
+  end
+
   describe "POST #create" do
+    let(:name) { "100m sprint" }
+
     context "with valid parameters" do
       let(:params) do
         {

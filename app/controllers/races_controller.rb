@@ -3,6 +3,21 @@ class RacesController < ApplicationController
   class DuplicateLaneError < StandardError; end
   class DuplicateParticipantError < StandardError; end
 
+  def index
+    @races = Race.pluck(:id, :name, :status)
+
+    render json: {
+      status: 200,
+      races: @races.map do |race|
+        {
+          id: race[0],
+          name: race[1],
+          status: race[2]
+        }
+      end
+    }, status: 200
+  end
+
   def create
     @race = Race.new(name: race_params[:name])
 
