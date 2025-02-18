@@ -9,6 +9,12 @@ describe('<Navbar />', () => {
   it('renders the "Create race" button"', () => {
     render(<Navbar />);
   
-    expect(screen.getByRole('link', { text: 'Create race'})).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Create race'})).toBeInTheDocument();
+  });
+
+  it('renders the "Race" button"', () => {
+    render(<Navbar />);
+  
+    expect(screen.getByRole('link', { name: 'Races'})).toBeInTheDocument();
   });
 });
