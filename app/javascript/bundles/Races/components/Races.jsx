@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router";
 
 import CreateRace from './CreateRace';
+import RacesList from './RacesList';
 import Navbar from './Navbar/Navbar';
 
 import {
@@ -17,6 +18,7 @@ const Races = () => {
 
       <Box sx={{ m: 2 }}>
         <Routes>
+          <Route path="/" element={<RacesList />} />
           <Route path="/create_race" element={<CreateRace />} />
         </Routes>
       </Box>

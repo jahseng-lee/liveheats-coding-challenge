@@ -4,7 +4,9 @@ class RacesController < ApplicationController
   class DuplicateParticipantError < StandardError; end
 
   def index
-    @races = Race.pluck(:id, :name, :status)
+    @races = Race
+      .order(created_at: :desc)
+      .pluck(:id, :name, :status)
 
     render json: {
       status: 200,
