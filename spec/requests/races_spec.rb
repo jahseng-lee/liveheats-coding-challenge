@@ -71,6 +71,7 @@ RSpec.describe "Races", type: :request do
       expect(data["race"]).to eq({
         "id" => race.id,
         "name" => race.name,
+        "status" => race.status,
         "participants" => race.participants.map do |participant|
           {
             "id" => participant.id,
@@ -228,6 +229,31 @@ RSpec.describe "Races", type: :request do
             participants: [
               { id: participant_1.id, placing: 1 },
               { id: participant_2.id, placing: 3 },
+            ]
+          }
+        }
+      end
+
+      it "does not update the placings or status" do
+        put race_path(race), params: params
+
+        data = JSON.parse(response.body)
+
+        expect(participant_1.reload.placing).to eq nil
+        expect(participant_2.reload.placing).to eq nil
+        expect(race.reload.status).to eq "pending"
+
+        expect(data["status"]).to eq 422
+      end
+    end
+
+    context "with nil in placings" do
+      let(:params) do
+        {
+          race: {
+            participants: [
+              { id: participant_1.id, placing: 1 },
+              { id: participant_2.id, placing: nil },
             ]
           }
         }

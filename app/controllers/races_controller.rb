@@ -3,6 +3,7 @@ class RacesController < ApplicationController
   class DuplicateParticipantError < StandardError; end
   class NotEnoughParticipantsError < StandardError; end
   class PlacementGapsError < StandardError; end
+  class RaceAlreadyCompleteError < StandardError; end
 
   def index
     @races = Race
@@ -29,6 +30,7 @@ class RacesController < ApplicationController
       race: {
         id: @race.id,
         name: @race.name,
+        status: @race.status,
         participants: @race.participants.map do |participant|
           {
             id: participant.id,
@@ -93,11 +95,13 @@ class RacesController < ApplicationController
   end
 
   def update
-
     @race = Race.find(params[:id])
 
     if placing_gaps?
       raise PlacementGapsError, "gaps in final placings"
+    end
+    if @race.complete?
+      raise RaceAlreadyCompleteError, "race is already complete"
     end
 
     Race.transaction do
@@ -118,7 +122,7 @@ class RacesController < ApplicationController
     render json: {
       status: 422,
       message: "Placements invalid. Placements must have correct gaps" \
-        " i.e. \"1, 1, 3, 4\"; NOT 1, 1, 2, 4 OR 1, 3, 4, 6"
+        " i.e. \"1, 1, 3, 4\"; NOT \"1, 1, 2, 4\" OR \"1, 3, 4, 6\""
     }, status: 422
   end
 
@@ -164,9 +168,15 @@ class RacesController < ApplicationController
   # [1, 1, 3] is valid, will return false
   # [1, 1, 2] is invalid, will return true
   # [1, 2, 4] is invalid, will return true
+  # [1, 2, nil] is invalid, will return true
   def placing_gaps?
     sorted_placings = update_race_params[:participants]
       .map do |participant|
+        if participant[:placing].nil?
+          # Don't allow `nil`
+          return true
+        end
+
         Integer(participant[:placing])
       end
       .sort

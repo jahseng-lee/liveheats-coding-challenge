@@ -29,10 +29,10 @@ const RacesList = () => {
       {(races.length !== 0) && (
         <>
           {races.map((race) => (
-            <Card variant="outlined" sx={{ mb: 2}}>
+            <Card variant='outlined' sx={{ mb: 2}}>
               <CardActionArea href={`/race/${race.id}`}>
                 <CardContent>
-                  <Typography variant="h6" component="p">{race.name}</Typography>
+                  <Typography variant='h6' component='p'>{race.name}</Typography>
                   <Typography>Status: {race.status}</Typography>
                 </CardContent>
               </CardActionArea>
