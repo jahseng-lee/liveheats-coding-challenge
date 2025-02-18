@@ -22,23 +22,29 @@ RSpec.feature "Completing a race", type: :feature, js: true do
   let(:race) { Race.create!(name: "5km marathon") }
 
   describe "When a race has been created" do
-    before do
+    let!(:participant_1) do
       Participant.create!(
         student: student_1,
         lane: 1,
         race: race
       )
+    end
+    let!(:participant_2) do
       Participant.create!(
         student: student_2,
         lane: 2,
         race: race
       )
+    end
+    let!(:participant_3) do
       Participant.create!(
         student: student_3,
         lane: 3,
         race: race
       )
+    end
 
+    before do
       visit root_path
     end
 
@@ -57,11 +63,24 @@ RSpec.feature "Completing a race", type: :feature, js: true do
 
       describe "filling in the values and clicking 'Finish race'" do
         before do
-          pending "TODO"
+          find("#participant-#{participant_1.id}-placing").click
+          find("li", text: 1).click
+
+          find("#participant-#{participant_2.id}-placing").click
+          find("li", text: 3).click
+
+          find("#participant-#{participant_3.id}-placing").click
+          find("li", text: 2).click
+
+          click_button "Complete race"
         end
 
         it "marks the race as 'Complete'" do
-          pending "TODO"
+          expect(page).not_to have_button "Complete race"
+
+          click_link "Races"
+
+          expect(page).to have_content "Status: complete"
         end
       end
     end
