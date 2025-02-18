@@ -6,6 +6,8 @@ Small app to create and manage races between students
 
 https://github.com/user-attachments/assets/14d484c8-3779-41d6-a576-88483b6f9f75
 
+Find the demo here: [https://liveheats-coding-challenge-21d393942147.herokuapp.com/](https://liveheats-coding-challenge-21d393942147.herokuapp.com/)
+
 ## Basic setup
 
 Requirements:
