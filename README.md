@@ -12,6 +12,7 @@ Requirements:
 
 * Ruby 3.3.6 (or compatible)
 * Rails 8.0.1
+* Postgres 14.16
 
 ```bash
 $ git clone git@github.com:jahseng-lee/liveheats-coding-challenge.git
