@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { fetchRaces } from '../queries';
 
 import {
   Card,
@@ -6,14 +7,6 @@ import {
   CardContent,
   Typography
 } from '@mui/material';
-
-const fetchRaces = async () => {
-  return fetch('/races')
-    .then((response) => response.text())
-    .then((data) => {
-      return JSON.parse(data);
-    });
-};
 
 const RacesList = () => {
   const [races, setRaces] = useState([]);

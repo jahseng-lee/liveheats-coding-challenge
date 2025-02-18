@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from "react-router";
+import { createRace, fetchStudents } from '../../queries';
 
 import {
   Alert,
@@ -13,30 +14,6 @@ import {
   Typography
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-
-const fetchStudents = async () => {
-  return fetch('/students')
-    .then((response) => response.text())
-    .then((data) => {
-      return JSON.parse(data);
-    });
-};
-
-const createRace = (body) => {
-  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-  return fetch('/races', {
-    method: "POST",
-    headers: {
-      "X-CSRF-Token": csrfToken,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body),
-  })
-    .then((response) => response.text())
-    .then((data) => {
-      return JSON.parse(data);
-    })
-};
 
 const CreateRace = () => {
   const [name, setName] = useState("");

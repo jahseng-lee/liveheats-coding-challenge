@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router';
+import { completeRace, fetchRace } from '../queries';
 
 import {
   Alert,
@@ -14,31 +15,7 @@ import {
   Typography
 } from '@mui/material';
 
-const fetchRace = async (raceId) => {
-  return fetch(`/races/${raceId}`)
-    .then((response) => response.text())
-    .then((data) => {
-      return JSON.parse(data);
-    });
-};
-
-const completeRace = async(raceId, body) => {
-  const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-  return fetch(`/races/${raceId}`, {
-    method: "PUT",
-    headers: {
-      "X-CSRF-Token": csrfToken,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body),
-  })
-    .then((response) => response.text())
-    .then((data) => {
-      return JSON.parse(data);
-    })
-};
-
-const Race = (props) => {
+const Race = () => {
   const [race, setRace] = useState();
   const [error, setError] = useState("");
   

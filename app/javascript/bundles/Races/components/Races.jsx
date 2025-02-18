@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from "react-router";
 
-import CreateRace from './CreateRace';
+import CreateRace from './CreateRace/CreateRace';
 import Race from './Race';
 import RacesList from './RacesList';
 import Navbar from './Navbar/Navbar';
