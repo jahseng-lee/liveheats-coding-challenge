@@ -24,8 +24,6 @@ const RacesList = () => {
     });
   }, [])
 
-  console.log(races);
-
   return (
     <>
       {(races.length !== 0) && (

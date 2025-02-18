@@ -52,7 +52,7 @@ RSpec.feature "Completing a race", type: :feature, js: true do
       end
 
       it "shows the race" do
-        expect(page).to have_current_path(race_path(race))
+        expect(page).to have_current_path("/race/#{race.id}")
       end
 
       describe "filling in the values and clicking 'Finish race'" do

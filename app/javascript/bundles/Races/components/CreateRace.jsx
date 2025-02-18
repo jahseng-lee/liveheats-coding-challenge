@@ -81,7 +81,6 @@ const CreateRace = () => {
   };
 
   const submitCreateRace = () => {
-    console.log(participants);
     createRace({
       race: {
         name: name,
@@ -147,7 +146,7 @@ const CreateRace = () => {
         {
           (participants.length !== students.length) && (
             <Button
-              variant="outlined"
+              variant='outlined'
               startIcon={<AddIcon />}
               sx={{ mr: 1 }}
               onClick={addLane}
@@ -157,7 +156,7 @@ const CreateRace = () => {
           )
         }
         <Button
-          variant="contained"
+          variant='contained'
           onClick={submitCreateRace}
           >
             Create
