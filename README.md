@@ -3,6 +3,7 @@
 Small app to create and manage races between students
 
 **DEMO:**
+
 https://github.com/user-attachments/assets/40b66ef0-9911-4c54-be2f-2e3da5713a7a
 
 ## Basic setup
